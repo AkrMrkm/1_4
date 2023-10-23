@@ -12,6 +12,18 @@
 #include "doublyLinkedList.h"
 #include "recordData.h"
 
+// 名前で昇順
+bool NameAscendingOrder(const RecordData& a, const RecordData& b) { return a.m_name < b.m_name; };
+
+// 名前で降順
+bool NameDescendingOrder(const RecordData& a, const RecordData& b) { return a.m_name > b.m_name; };
+
+// スコアで昇順
+bool ScoreAscendingOrder(const RecordData& a, const RecordData& b) { return a.m_score < b.m_score; };
+
+// スコアで降順
+bool ScoreDescendingOrder(const RecordData& a, const RecordData& b) { return a.m_score > b.m_score; };
+
 int main()
 {
 	//ファイル読み込み
@@ -41,47 +53,16 @@ int main()
 	// ファイルを閉じる
 	inputFile.close();
 
+	// ソート
 	{
-		// 昇順ソート
-		{
-			DoublyLinkedList<RecordData>::Iterator beginIt = list.begin();
-			DoublyLinkedList<RecordData>::Iterator endIt = list.end();
-
-			auto cmp = [](RecordData a, RecordData b) { return a < b; }; // 昇順
-
-			list.QuickSort(beginIt, endIt, cmp);
-		}
-
-		std::cout << "[昇順]" << std::endl;
-
-		// リストを格納した順で表示
-		for (const RecordData& data : list)
-		{
-			std::cout << " score : " << data.m_score << "   name : " << data.m_name << std::endl;
-		}
+		list.QuickSort(ScoreAscendingOrder);
+		//list.QuickSort(DescendingOrder);
 	}
 
-	std::cout << "\n もう一度キーを押すと降順でソートします。" << std::endl;
-	getchar();
-
+	// リストを表示
+	for (const RecordData& data : list)
 	{
-		// 降順ソート
-		{
-			DoublyLinkedList<RecordData>::Iterator beginIt = list.begin();
-			DoublyLinkedList<RecordData>::Iterator endIt = list.end();
-
-			auto cmp = [](RecordData a, RecordData b) { return a > b; }; // 降順
-
-			list.QuickSort(beginIt, endIt, cmp);
-		}
-
-		std::cout << "[降順]" << std::endl;
-
-		// リストを格納した順で表示
-		for (const RecordData& data : list)
-		{
-			std::cout << " score : " << data.m_score << "   name : " << data.m_name << std::endl;
-		}
+		std::cout << " score : " << data.m_score << "   name : " << data.m_name << std::endl;
 	}
 
 	getchar();

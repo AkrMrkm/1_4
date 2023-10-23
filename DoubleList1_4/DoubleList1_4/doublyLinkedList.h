@@ -246,13 +246,10 @@ public:
 
 	/**
 	* @brief		クイックソート
-	* @param[in]	leftIt  ソートを行う範囲の左端のイテレータ
-	* @param[in]	rightIt ソートを行う範囲の右端のイテレータ
-	* @param[in]	cmp		比較関数オブジェクト
+	* @param[in]	cmp		比較関数
 	* @details		リストの要素を比較関数に応じて降順または昇順で整列させる
 	*/
-	template<typename T>
-	inline void QuickSort(ConstIterator & left, ConstIterator & right, T cmp);
+	inline void QuickSort(bool cmp(const DATA&, const DATA&));
 
 	private:
 		/**
@@ -264,15 +261,22 @@ public:
 		inline void Swap(Node* node1, Node* node2);
 
 		/**
-		* @brief		基準値をもとに分割して入れ替えて基準値を返す関数
-		* @param[in]	left ソートを行う範囲の左端のノード
-		* @param[in]	right ソートを行う範囲の右端のノード
-		* @param[in]	cmp		比較関数オブジェクト
-		* @return		入れ替え処理が終わった後の位置のノードを返す
-		* @details		与えられた範囲内の要素を基準値より小さい要素と大きい要素に分け、入れ替えが終わった時点での基準値を返す。
+		* @brief		探索が終わったかを判別する関数
+		* @param[in]	node1 node2と比較するノード
+		* @param[in]	node2 node1と比較するノード
+		* @return		node1がnode2より右の位置にあったらtrueを返す。
+		* @details		
 		*/
-		template<typename T>
-		inline Node* Partition(Node* left, Node* right, T cmp);
+		inline const bool SearchFinished(Node* left, Node* right) const;
+
+		/**
+		* @brief		クイックソートの内部処理
+		* @param[in]	leftIt  ソートを行う範囲の左端のイテレータ
+		* @param[in]	rightIt ソートを行う範囲の右端のイテレータ
+		* @param[in]	cmp		比較関数オブジェクト
+		* @details		リストの要素を比較関数に応じて降順または昇順で整列させる
+		*/
+		inline void QuickSortProcess(ConstIterator & left, ConstIterator & right, bool cmp(const DATA&, const DATA&));
 };
 
 #include "doublyLinkedList.inl"

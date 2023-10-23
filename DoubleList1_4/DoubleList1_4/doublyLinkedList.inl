@@ -131,65 +131,113 @@ inline typename DoublyLinkedList<DATA>::ConstIterator DoublyLinkedList<DATA>::en
 // クイックソートのアルゴリズム、コードを参考にしたサイト https://daeudaeu.com/quicksort/
 // 比較関数、ラムダ式について参考にしたサイト https://qiita.com/threecups/items/aa1923a9922dc0a7abfe
 template<typename DATA>
-template<typename T>
-inline void DoublyLinkedList<DATA>::QuickSort(ConstIterator& left, ConstIterator& right, T cmp)
+inline void DoublyLinkedList<DATA>::QuickSort(bool cmp(const DATA&, const DATA&))
 {
-	// 要素が空だったら終了
-	if (m_DummyNode == m_DummyNode->m_prev) return;
+	// 要素がひとつ以下だったら終了
+	if (m_DataNum <= 1) return;
 
-	// 右端のイテレータが末尾イテレータであったら、ひとつの左に変える
-	if (right == end()) --right;
+	DoublyLinkedList<DATA>::Iterator beginIt = begin();
+	DoublyLinkedList<DATA>::Iterator endIt = end();
 
-	// 入れ替え処理終了
-	if (right == left) return;
-	if (left.m_Node == right.m_Node->m_next) return;
-
-	// 入れ替え処理
-	Node* pivot = Partition(left.m_Node, right.m_Node, cmp);
-
-	// Partition()で返ってきた基準値をもとに２つに分割して、再度クイックソートを行う
-	ConstIterator it = ConstIterator(pivot->m_prev, this);
-	ConstIterator it2 = ConstIterator(pivot->m_next, this);
-	QuickSort(left, it, cmp);
-	QuickSort(it2, right, cmp);
+	QuickSortProcess(beginIt, --endIt, cmp);
 }
 
 // ノードの持つデータを入れ替える関数
 template<typename DATA>
 inline void DoublyLinkedList<DATA>::Swap(Node* node1, Node* node2)
 {
-	DATA temp = node1->m_data;
+	{
+		DATA temp = node1->m_data;
 
-	node1->m_data = node2->m_data;
+		node1->m_data = node2->m_data;
 
-	node2->m_data = temp;
+		node2->m_data = temp;
+	}
+
+	{
+		//node1->m_prev->m_next = node2;
+		//node1->m_next->m_prev = node2;
+		//node2->m_prev->m_next = node1;
+		//node2->m_next->m_prev = node1;
+
+		//Node* tempPrev = node1->m_prev;
+		//Node* tempNext = node1->m_next;
+
+		//node1->m_prev = node2->m_prev;
+		//node1->m_next = node2->m_next;
+		//node2->m_prev = tempPrev;
+		//node2->m_next = tempNext;
+	}
 }
 
-// 基準値をもとに分割して入れ替えて基準値を返す関数
+// 探索が終わったかを判別する関数
 template<typename DATA>
-template<typename T>
-inline typename DoublyLinkedList<DATA>::Node* DoublyLinkedList<DATA>::Partition(Node* left, Node* right, T cmp)
+inline const bool DoublyLinkedList<DATA>::SearchFinished(Node * left, Node * right) const
 {
-	// 基準値(ピボット)
-	auto pivotValue = right->m_data;
+	Node* i = left;
+	Node* j = right;
 
-	Node* i = left->m_prev;
-
-	// ピボットを基準に大小の要素に分ける
-	for (Node* j = left; j != right; j = j->m_next)
+	while (i != m_DummyNode)
 	{
-		if (cmp(j->m_data, pivotValue))
+		if (i == right)
 		{
-			i = (i == nullptr) ? left : i->m_next;
-			Swap(i, j);
+			return true;
+		}
+		else
+		{
+			i = i->m_prev;
 		}
 	}
 
-	i = (i == nullptr) ? left : i->m_next;
-	Swap(i, right);
+	return false;
+}
 
-	// 分割をし終えた位置のピボットを返す
-	return i;
+// クイックソートの内部処理
+template<typename DATA>
+inline void DoublyLinkedList<DATA>::QuickSortProcess(ConstIterator & left, ConstIterator & right, bool cmp(const DATA&, const DATA&))
+{
+	// 入れ替え処理終了
+	if (left.m_Node == right.m_Node->m_next)return;
+	if (left == right)return;
+
+	Node* i = left.m_Node;
+	Node* j = right.m_Node;
+
+	// 基準値(ピボット)
+	DATA pivot = left.m_Node->m_data;
+
+	// pivot以下のデータを左に、pivot以上のデータを右に集める
+	while (1)
+	{
+		// 左側から探索(ピボット以上のデータを見つけたらor右端に達したら終了)
+		while (cmp(i->m_data, pivot))
+		{
+			if (i == right.m_Node) break;
+			i = i->m_next;
+		}
+
+		// 右側から探索(ピボット以下のデータを見つけたらor左端に達したら終了)
+		while (!cmp(j->m_data, pivot))
+		{
+			if (j == left.m_Node) break;
+			j = j->m_prev;
+		}
+
+		// iがjよりも右にあったらループからぬける
+		if (SearchFinished(i, j)) break;
+
+		// 入れ替える
+		Swap(i, j);
+
+		// 再度探索開始
+		i = i->m_next;
+		j = j->m_prev;
+	}
+
+	ConstIterator it = ConstIterator(i->m_prev, this);
+	ConstIterator it2 = ConstIterator(j->m_next, this);
+	QuickSortProcess(left, it, cmp);
+	QuickSortProcess(it2, right, cmp);
 }
 
 

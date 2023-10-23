@@ -20,20 +20,20 @@ struct RecordData
 	//! –¼‘O
 	std::string m_name;
 
-	bool operator<(const RecordData& other) const
-	{
-		return (m_score	< other.m_score) ||
-			(m_score == other.m_score && m_name < other.m_name);
-	}
+	//bool operator<(const RecordData& other) const
+	//{
+	//	return (m_score	< other.m_score) ||
+	//		(m_score == other.m_score && m_name < other.m_name);
+	//}
 
-	bool operator>(const RecordData& other) const
-	{
-		return (m_score	> other.m_score) ||
-			(m_score == other.m_score && m_name > other.m_name);
-	}
+	//bool operator>(const RecordData& other) const
+	//{
+	//	return (m_score	> other.m_score) ||
+	//		(m_score == other.m_score && m_name > other.m_name);
+	//}
 
-	bool operator==(const RecordData& other) const
-	{
-		return (m_score == other.m_score);
-	}
+	//bool operator==(const RecordData& other) const
+	//{
+	//	return (m_score == other.m_score);
+	//}
 };
